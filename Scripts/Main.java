@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 public class Main {
 	// TODO
 	// Write calculated data to CSV's
-	
+
 	// Load data
 	private static File clients = new File("./data/client.csv");
 	private static File districts = new File("./data/district.csv");
@@ -18,7 +18,7 @@ public class Main {
 	 * Calculate the total of men and women
 	 * @throws IOException
 	 */
-	public static void gender() throws IOException {
+	public static void clientsPerGender() throws IOException {
 		// Separate men from women
 		ArrayList<String> men = new ArrayList<>();
 		ArrayList<String> women = new ArrayList<>();
@@ -53,6 +53,64 @@ public class Main {
 		System.out.println("GENDER : TOTAL");
 		System.out.println("Men : " + men.size());
 		System.out.println("Women : " + women.size());
+	}
+
+	/**
+	 * Calculate the total of clients birthed in each decade
+	 * @throws IOException
+	 */
+	public static void clientsPerDecade() throws IOException {
+		// Separate clients by birth decade
+		HashMap<String, Integer> cliDec = new HashMap<>();
+		
+		// Set decades <20 to >80
+		cliDec.put("<20", 0);
+		for (int i = 20; i < 80; i += 10) {
+			cliDec.put(i + " - " + (i + 10), 0);
+		}
+		cliDec.put(">80", 0);
+
+		// Set file reader
+		String line = null;
+		BufferedReader br = new BufferedReader(new FileReader(clients));
+
+		// Ignore first line because it contains column names
+		br.readLine();
+
+		// Read it line by line
+		while ((line = br.readLine()) != null) {
+			// Separate with ';' delimiter
+			String[] data = line.split(";");
+
+			// Second column refers to birth date (YYMMDD - men; YY(MM + 50)DD - women)
+			String date = data[1].replaceAll("\"", "");
+			
+			// Check decade <20
+			if (Integer.parseInt(date) / 10000 < 20) {
+				cliDec.put("<20", cliDec.get("<20").intValue() + 1);
+			}
+			
+			// Check decades 20 through 80
+			for (int i = 20; i < 80; i += 10) {
+				if (Integer.parseInt(date) / 10000 >= i && Integer.parseInt(date) / 10000 < i + 10) {
+					cliDec.put(i + " - " + (i + 10), cliDec.get(i + " - " + (i + 10)).intValue() + 1);
+				}
+			}
+			
+			// Check decade >80
+			if (Integer.parseInt(date) / 10000 >= 80) {
+				cliDec.put(">80", cliDec.get(">80").intValue() + 1);
+			}
+		}
+
+		// Close reader
+		br.close();
+		
+		// Print statistics
+		System.out.println("DECADE : TOTAL");
+		for (Entry<String, Integer> decade: cliDec.entrySet()) {
+			System.out.println(decade.getKey() + " : " + decade.getValue());
+		}
 	}
 
 	/**
@@ -95,7 +153,7 @@ public class Main {
 		// Set file reader
 		line = null;
 		BufferedReader districtsBr = new BufferedReader(new FileReader(districts));
-		
+
 		// Ignore first line because it contains column names
 		districtsBr.readLine();
 
@@ -106,47 +164,47 @@ public class Main {
 
 			// First column refers to district
 			String district = data[0];
-			
+
 			// Third column refers to region
 			String region = data[2];
-			
+
 			// Check if it contains
 			if (regDis.containsKey(region.trim())) {
 				// Get current list and update it
 				ArrayList<Integer> disList = regDis.get(region.trim());
 				disList.add(Integer.parseInt(district));
-				
+
 				// Update region
 				regDis.put(region.trim(), disList);
 			} else {
 				// Create list and add first district
 				ArrayList<Integer> disList = new ArrayList<>();
 				disList.add(Integer.parseInt(district));
-				
+
 				// Set region
 				regDis.put(region.trim(), disList);
 			}
 		}
-		
+
 		// Close districts reader
 		districtsBr.close();
-		
+
 		// Get number of client per region
 		HashMap<String, Integer> regCli = new HashMap<>(); // Region -> #Clients
-		
+
 		// Calculate total number of clients per region
 		for (Entry<String, ArrayList<Integer>> region: regDis.entrySet()) {
 			// Get all districts of corresponding region
 			regCli.put(region.getKey(), 0);
 			ArrayList<Integer> disList = region.getValue();
-			
+
 			// Check the total of each district
 			for (int i = 0; i < disList.size(); i++) {
 				int temp = regCli.get(region.getKey()).intValue();
 				regCli.put(region.getKey(), temp + cliDis.get(disList.get(i)).intValue());
 			}
 		}
-		
+
 		// Print statistics
 		System.out.println("REGION : TOTAL");
 		for (Entry<String, Integer> region: regCli.entrySet()) {
@@ -160,10 +218,13 @@ public class Main {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		gender();
-		System.out.println();
-		
-		clientsPerRegion();
-		System.out.println();
+//		clientsPerGender();
+//		System.out.println();
+
+//		clientsPerDecade();
+//		System.out.println();
+
+//		clientsPerRegion();
+//		System.out.println();
 	}
 }
