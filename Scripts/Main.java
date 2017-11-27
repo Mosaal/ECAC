@@ -1,0 +1,169 @@
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+
+public class Main {
+	// TODO
+	// Write calculated data to CSV's
+	
+	// Load data
+	private static File clients = new File("./data/client.csv");
+	private static File districts = new File("./data/district.csv");
+
+	/**
+	 * Calculate the total of men and women
+	 * @throws IOException
+	 */
+	public static void gender() throws IOException {
+		// Separate men from women
+		ArrayList<String> men = new ArrayList<>();
+		ArrayList<String> women = new ArrayList<>();
+
+		// Set file reader
+		String line = null;
+		BufferedReader br = new BufferedReader(new FileReader(clients));
+
+		// Ignore first line because it contains column names
+		br.readLine();
+
+		// Read it line by line
+		while ((line = br.readLine()) != null) {
+			// Separate with ';' delimiter
+			String[] data = line.split(";");
+
+			// Second column refers to birth date (YYMMDD - men; YY(MM + 50)DD - women)
+			String date = data[1].replaceAll("\"", "");
+
+			// Check month (>50 - women; <50 - men)
+			if ((Integer.parseInt(date) / 100) % 100 < 50) {
+				men.add(line);
+			} else if ((Integer.parseInt(date) / 100) % 100 > 50) {
+				women.add(line);
+			}
+		}
+
+		// Close reader
+		br.close();
+
+		// Print statistics
+		System.out.println("GENDER : TOTAL");
+		System.out.println("Men : " + men.size());
+		System.out.println("Women : " + women.size());
+	}
+
+	/**
+	 * Calculate the total of clients per region
+	 * @throws IOException
+	 */
+	public static void clientsPerRegion() throws IOException {
+		// Count how many clients there are per region
+		HashMap<Integer, Integer> cliDis = new HashMap<>(); // DistrictID -> #Clients
+
+		// Set file reader
+		String line = null;
+		BufferedReader clientsBr = new BufferedReader(new FileReader(clients));
+
+		// Ignore first line because it contains column names
+		clientsBr.readLine();
+
+		// Read it line by line
+		while ((line = clientsBr.readLine()) != null) {
+			// Separate with ';' delimiter
+			String[] data = line.split(";");
+
+			// Third column refers to district
+			String district = data[2];
+
+			// Check if it contains
+			if (cliDis.containsKey(Integer.parseInt(district))) {
+				cliDis.put(Integer.parseInt(district), cliDis.get(Integer.parseInt(district)).intValue() + 1);
+			} else {
+				cliDis.put(Integer.parseInt(district), 1);
+			}
+		}
+
+		// Close clients reader
+		clientsBr.close();
+
+		// Get all the districts per region
+		HashMap<String, ArrayList<Integer>> regDis = new HashMap<>(); // Region -> Districts
+
+		// Set file reader
+		line = null;
+		BufferedReader districtsBr = new BufferedReader(new FileReader(districts));
+		
+		// Ignore first line because it contains column names
+		districtsBr.readLine();
+
+		// Read it line by line
+		while ((line = districtsBr.readLine()) != null) {
+			// Separate with ';' delimiter
+			String[] data = line.split(";");
+
+			// First column refers to district
+			String district = data[0];
+			
+			// Third column refers to region
+			String region = data[2];
+			
+			// Check if it contains
+			if (regDis.containsKey(region.trim())) {
+				// Get current list and update it
+				ArrayList<Integer> disList = regDis.get(region.trim());
+				disList.add(Integer.parseInt(district));
+				
+				// Update region
+				regDis.put(region.trim(), disList);
+			} else {
+				// Create list and add first district
+				ArrayList<Integer> disList = new ArrayList<>();
+				disList.add(Integer.parseInt(district));
+				
+				// Set region
+				regDis.put(region.trim(), disList);
+			}
+		}
+		
+		// Close districts reader
+		districtsBr.close();
+		
+		// Get number of client per region
+		HashMap<String, Integer> regCli = new HashMap<>(); // Region -> #Clients
+		
+		// Calculate total number of clients per region
+		for (Entry<String, ArrayList<Integer>> region: regDis.entrySet()) {
+			// Get all districts of corresponding region
+			regCli.put(region.getKey(), 0);
+			ArrayList<Integer> disList = region.getValue();
+			
+			// Check the total of each district
+			for (int i = 0; i < disList.size(); i++) {
+				int temp = regCli.get(region.getKey()).intValue();
+				regCli.put(region.getKey(), temp + cliDis.get(disList.get(i)).intValue());
+			}
+		}
+		
+		// Print statistics
+		System.out.println("REGION : TOTAL");
+		for (Entry<String, Integer> region: regCli.entrySet()) {
+			System.out.println(region.getKey() + " : " + region.getValue().intValue());
+		}
+	}
+
+	/**
+	 * Application's starting point
+	 * @param args command line's arguments
+	 * @throws IOException
+	 */
+	public static void main(String[] args) throws IOException {
+		gender();
+		System.out.println();
+		
+		clientsPerRegion();
+		System.out.println();
+	}
+}
