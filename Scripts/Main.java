@@ -189,7 +189,7 @@ public class Main {
 		// Close districts reader
 		districtsBr.close();
 
-		// Get number of client per region
+		// Get number of clients per region
 		HashMap<String, Integer> regCli = new HashMap<>(); // Region -> #Clients
 
 		// Calculate total number of clients per region
@@ -287,6 +287,22 @@ public class Main {
 
 		// Close districts reader
 		districtsBr.close();
+		
+		// Get number of clients per region
+		HashMap<String, Integer> regCli = new HashMap<>(); // Region -> #Clients
+
+		// Calculate total number of clients per region
+		for (Entry<String, ArrayList<Integer>> region: regDis.entrySet()) {
+			// Get all districts of corresponding region
+			regCli.put(region.getKey(), 0);
+			ArrayList<Integer> disList = region.getValue();
+
+			// Check the total of each district
+			for (int i = 0; i < disList.size(); i++) {
+				int temp = regCli.get(region.getKey()).intValue();
+				regCli.put(region.getKey(), temp + cliDis.get(disList.get(i)).intValue());
+			}
+		}
 
 		// Get the average salaries per region
 		HashMap<String, ArrayList<Integer>> regSal = new HashMap<>(); // Region -> Average Salaries
@@ -347,9 +363,20 @@ public class Main {
 			regAvgSal.put(region.getKey(), Double.parseDouble(res));
 		}
 		
+		// Get number of clients per average salary
+		HashMap<Integer, Double> cliAvgSal = new HashMap<>(); // #Clients -> Average Salary
+		
+		// Calculate total number of clients per average salary
+		for (Entry<String, Double> region: regAvgSal.entrySet()) {
+			// Get the region's # of clients and its average salary
+			cliAvgSal.put(regCli.get(region.getKey()), regAvgSal.get(region.getKey()));
+		}
+		
 		// Print statistics
-		// regDis, cliDis
-		System.out.println(regAvgSal.toString());
+		System.out.println("CLIENTS : AVG. SALARY");
+		for (Entry<Integer, Double> obj: cliAvgSal.entrySet()) {
+			System.out.println(obj.getKey().intValue() + " : " + obj.getValue().doubleValue());
+		}
 	}
 
 	/**
@@ -358,16 +385,16 @@ public class Main {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		//		clientsPerGender();
-		//		System.out.println();
+//		clientsPerGender();
+//		System.out.println();
 
-		//		clientsPerDecade();
-		//		System.out.println();
+//		clientsPerDecade();
+//		System.out.println();
 
-		//		clientsPerRegion();
-		//		System.out.println();
+//		clientsPerRegion();
+//		System.out.println();
 
-		clientsAverageSalary();
-		System.out.println();
+//		clientsAverageSalary();
+//		System.out.println();
 	}
 }
