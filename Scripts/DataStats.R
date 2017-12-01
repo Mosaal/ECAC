@@ -1,3 +1,4 @@
+# Load required packages
 library(describer)
 
 # Load data
@@ -23,30 +24,30 @@ cat("Loading transactions...\n")
 transactions <- read.csv2(file="../Data/trans_train.csv")
 
 # Summarize and describe data
-cat("Summarize and describe the Accounts...\n")
+cat("Accounts loaded.\n")
 summary(accounts)
 describe(accounts)
 
-cat("Summarize and describe the Credit Cards...\n")
+cat("Credit Cards loaded.\n")
 summary(cards)
 describe(cards)
 
-cat("Summarize and describe the Clients...\n")
+cat("Clients loaded.\n")
 summary(clients)
 describe(clients)
 
-cat("Summarize and describe the Disposition...\n")
+cat("Disposition loaded.\n")
 summary(disposition)
 describe(disposition)
 
-cat("Summarize and describe the Districts...\n")
+cat("Districts loaded.\n")
 summary(districts)
 describe(districts)
 
-cat("Summarize and describe the Loans...\n")
+cat("Loans loaded.\n")
 summary(loans)
 describe(loans)
 
-cat("Summarize and describe the Transactions...\n")
+cat("Transactions loaded.\n")
 summary(transactions)
 describe(transactions)

@@ -12,7 +12,9 @@ public class Main {
 
 	// Load data
 	private static File clients = new File("./data/client.csv");
+	private static File disposition = new File("./data/disp.csv");
 	private static File districts = new File("./data/district.csv");
+	private static File transactions = new File("./data/trans_train.csv");
 
 	/**
 	 * Calculate the total of men and women
@@ -378,13 +380,123 @@ public class Main {
 			System.out.println(obj.getKey().intValue() + " : " + obj.getValue().doubleValue());
 		}
 	}
+	
+	/**
+	 * Calculate the total number of clients that pay household
+	 * @throws IOException
+	 */
+	public static void clientsPayHousehold() throws IOException {
+		// Get household transactions
+		ArrayList<Integer> household = new ArrayList<>(); // AccountIDs that pay
+		ArrayList<Integer> notHousehold = new ArrayList<>(); // AccountIDs that do not pay
+		
+		// Set file reader
+		String line = null;
+		BufferedReader transBr = new BufferedReader(new FileReader(transactions));
+		
+		// Ignore first line because it contains column names
+		transBr.readLine();
 
+		// Read it line by line
+		while ((line = transBr.readLine()) != null) {
+			// Separate with ';' delimiter
+			String[] data = line.split(";");
+
+			// Second column refers to account
+			String account = data[1];
+			
+			// Third column refers to k symbol
+			String kSymbol = data[7];
+			
+			// Check if it is household
+			if (kSymbol.contains("household")) {
+				if (!household.contains(Integer.parseInt(account))) {
+					household.add(Integer.parseInt(account));
+				}
+			} else {
+				if (!notHousehold.contains(Integer.parseInt(account))) {
+					notHousehold.add(Integer.parseInt(account));
+				}
+			}
+		}
+		
+		// Close file reader
+		transBr.close();
+		
+		// Remove duplicates
+		for (int i = 0; i < household.size(); i++) {
+			if (notHousehold.contains(household.get(i))) {
+				notHousehold.remove(household.get(i));
+			}
+		}
+		
+		// Get number of clients per account
+		HashMap<Integer, Integer> cliAcc = new HashMap<>(); // AccountID -> #Clients
+		
+		// Set file reader
+		line = null;
+		BufferedReader dispBr = new BufferedReader(new FileReader(disposition));
+		
+		// Ignore first line because it contains column names
+		dispBr.readLine();
+		
+		// Read it line by line
+		while ((line = dispBr.readLine()) != null) {
+			// Separate with ';' delimiter
+			String[] data = line.split(";");
+
+			// Third column refers to district
+			String account = data[2];
+			
+			// Check if it contains
+			if (cliAcc.containsKey(Integer.parseInt(account))) {
+				cliAcc.put(Integer.parseInt(account), cliAcc.get(Integer.parseInt(account)).intValue() + 1);
+			} else {
+				cliAcc.put(Integer.parseInt(account), 1);
+			}
+		}
+		
+		// Close file reader
+		dispBr.close();
+		
+		// Check how many pay
+		int pay = 0;
+		for (int i = 0; i < household.size(); i++) {
+			if (cliAcc.containsKey(household.get(i))) {
+				pay += cliAcc.get(household.get(i)).intValue();
+			}
+		}
+		
+		// And how many don't
+		int notPay = 0;
+		for (int i = 0; i < notHousehold.size(); i++) {
+			if (cliAcc.containsKey(notHousehold.get(i))) {
+				notPay += cliAcc.get(notHousehold.get(i)).intValue();
+			}
+		}
+		
+		// Print statistics
+		System.out.println("STATUS : TOTAL");
+		System.out.println("PAY : " + pay);
+		System.out.println("DON'T PAY : " + notPay);
+	}
+	
+	/**
+	 * Calculate the total number of clients that have made loans
+	 * @throws IOException
+	 */
+	public static void clientsMadeLoan() throws IOException {
+		
+	}
+	
 	/**
 	 * Application's starting point
 	 * @param args command line's arguments
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
+		System.out.println("START");
+		
 //		clientsPerGender();
 //		System.out.println();
 
@@ -396,5 +508,13 @@ public class Main {
 
 //		clientsAverageSalary();
 //		System.out.println();
+		
+//		clientsPayHousehold();
+//		System.out.println();
+		
+		clientsMadeLoan();
+		System.out.println();
+		
+		System.out.println("FINISH");
 	}
 }
