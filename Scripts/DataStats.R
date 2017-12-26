@@ -3,31 +3,28 @@ library(describer)
 
 # Load data
 cat("Loading accounts...\n")
-accounts <- read.csv2(file="../Data/account.csv", sep=";", stringsAsFactors = FALSE)
+accounts <- read.csv2(file="../Data/account.csv", sep=";", stringsAsFactors=FALSE)
 
 cat("Loading credit cards...\n")
-cards_train <- read.csv2(file="../Data/card_train.csv", sep=";", stringsAsFactors = FALSE)
-
-cards_test <- read.csv2(file="../Data/card_test.csv", sep=";", stringsAsFactors = FALSE)
+cards_train <- read.csv2(file="../Data/card_train.csv", sep=";", stringsAsFactors=FALSE)
+cards_test <- read.csv2(file="../Data/card_test.csv", sep=";", stringsAsFactors=FALSE)
 
 cat("Loading clients...\n")
-clients <- read.csv2(file="../Data/client.csv", sep=";", stringsAsFactors = FALSE)
+clients <- read.csv2(file="../Data/client.csv", sep=";", stringsAsFactors=FALSE)
 
 cat("Loading disposition...\n")
-dispositions <- read.csv2(file="../Data/disp.csv", sep=";", stringsAsFactors = FALSE)
+dispositions <- read.csv2(file="../Data/disp.csv", sep=";", stringsAsFactors=FALSE)
 
 cat("Loading districts...\n")
-districts <- read.csv2(file="../Data/district.csv", sep=";", stringsAsFactors = FALSE)
+districts <- read.csv2(file="../Data/district.csv", sep=";", stringsAsFactors=FALSE)
 
 cat("Loading loans...\n")
-loans_train <- read.csv2(file="../Data/loan_train.csv", sep=";", stringsAsFactors = FALSE)
-
-loans_test <- read.csv2(file="../Data/loan_test.csv", sep=";", stringsAsFactors = FALSE)
+loans_train <- read.csv2(file="../Data/loan_train.csv", sep=";", stringsAsFactors=FALSE)
+loans_test <- read.csv2(file="../Data/loan_test.csv", sep=";", stringsAsFactors=FALSE)
 
 cat("Loading transactions...\n")
-transactions_train <- read.csv2(file="../Data/trans_train.csv", sep=";", stringsAsFactors = FALSE)
-
-transactions_test <- read.csv2(file="../Data/trans_test.csv", sep=";", stringsAsFactors = FALSE)
+transactions_train <- read.csv2(file="../Data/trans_train.csv", sep=";", stringsAsFactors=FALSE)
+transactions_test <- read.csv2(file="../Data/trans_test.csv", sep=";", stringsAsFactors=FALSE)
 
 # Summarize and describe data
 cat("Accounts loaded.\n")
