@@ -8,9 +8,6 @@ district <- read.csv2(file = "../Original Data/district.csv", sep = ";", strings
 trans_test <- read.csv2(file = "../Original Data/trans_test.csv", sep = ";", stringsAsFactors = FALSE)
 trans_train <- read.csv2(file = "../Original Data/trans_train.csv", sep = ";", stringsAsFactors = FALSE)
 
-testHolder <- trans_test
-trainHolder <- trans_train
-
 # Separate men from women
 men <- client %>% filter(((birth_number / 100) %% 100) < 50)
 women <- client %>% filter(((birth_number / 100) %% 100) > 50)
@@ -56,8 +53,8 @@ sd_balance_all <- merge(x = sd_balance, y = sd_balance_test, all = TRUE)
 descriptive_dataset <- merge(descriptive_dataset, sd_balance_all, all.x=TRUE)
 
 # Calculate balances' average
-avg_balance <- aggregate(trainHolder[,"balance"], list(account_id = trainHolder$account_id), mean)
-avg_balance_test <- aggregate(testHolder[,"balance"], list(account_id = testHolder$account_id), mean)
+avg_balance <- aggregate(trans_train[,"balance"], list(account_id = trans_train$account_id), mean)
+avg_balance_test <- aggregate(trans_test[,"balance"], list(account_id = trans_test$account_id), mean)
 
 colnames(avg_balance)[2] <- "balance_avg"
 colnames(avg_balance_test)[2] <- "balance_avg"
