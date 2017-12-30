@@ -90,3 +90,7 @@ barplot(salReg, ylab="Average Salary", xlab="Region", names.arg=regNames, main="
 
 # Unemploymant rates growth
 # TODO
+
+
+
+
